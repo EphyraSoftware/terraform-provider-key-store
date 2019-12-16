@@ -1,7 +1,14 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
 
-# Created by https://www.gitignore.io/api/windows,visualstudiocode,terraform,linux,intellij+iml,intellij+all,intellij,gradle,go,eclipse
-# Edit at https://www.gitignore.io/?templates=windows,visualstudiocode,terraform,linux,intellij+iml,intellij+all,intellij,gradle,go,eclipse
+# Created by https://www.gitignore.io/api/windows,visualstudiocode,terraform,linux,intellij+iml,intellij+all,intellij,gradle,go,eclipse,code
+# Edit at https://www.gitignore.io/?templates=windows,visualstudiocode,terraform,linux,intellij+iml,intellij+all,intellij,gradle,go,eclipse,code
+
+### Code ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
 ### Eclipse ###
 .metadata
@@ -331,11 +338,6 @@ override.tf.json
 # example: *tfplan*
 
 ### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
@@ -386,7 +388,9 @@ gradle-app.setting
 ### Gradle Patch ###
 **/build/
 
-# End of https://www.gitignore.io/api/windows,visualstudiocode,terraform,linux,intellij+iml,intellij+all,intellij,gradle,go,eclipse
+# End of https://www.gitignore.io/api/windows,visualstudiocode,terraform,linux,intellij+iml,intellij+all,intellij,gradle,go,eclipse,code
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
+.vscode/
+*.p12
