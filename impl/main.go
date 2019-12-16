@@ -3,26 +3,27 @@ package impl
 import (
 	"crypto/rand"
 	"crypto/x509"
-	"encoding/base64"
 	"encoding/pem"
 	"errors"
+	"io/ioutil"
+	"path"
 	"software.sslmate.com/src/go-pkcs12"
 )
 
-func CreateBundle(certPEM string, keyPEM string) (*string, error) {
+func CreateBundle(certPEM string, keyPEM string, outputPath string, name string) error {
 	block, _ := pem.Decode([]byte(certPEM))
 	if block == nil || block.Type != "CERTIFICATE" {
-		return nil, errors.New("could not decode public certificate")
+		return errors.New("could not decode public certificate")
 	}
 
 	publicKey, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
-		return nil, errors.New("could not parse public certificate")
+		return errors.New("could not parse public certificate")
 	}
 
 	keyBlock, _ := pem.Decode([]byte(keyPEM))
-	if keyBlock == nil || keyBlock.Type != "CERTIFICATE" {
-		return nil, errors.New("could not decode private key")
+	if keyBlock == nil || keyBlock.Type != "RSA PRIVATE KEY" {
+		return errors.New("could not decode private key")
 	}
 
 	var privateKey interface{}
@@ -31,7 +32,7 @@ func CreateBundle(certPEM string, keyPEM string) (*string, error) {
 		privateKey, err = x509.ParsePKCS8PrivateKey(keyBlock.Bytes)
 	}
 	if err != nil {
-		return nil, errors.New("could not parse private key")
+		return errors.New("could not parse private key")
 	}
 
 	result, err := pkcs12.Encode(
@@ -43,9 +44,14 @@ func CreateBundle(certPEM string, keyPEM string) (*string, error) {
 	)
 
 	if err != nil {
-		return nil, errors.New("failed to build PKCS12 bundle")
+		return errors.New("failed to build PKCS12 bundle")
 	}
 
-	str := base64.StdEncoding.EncodeToString(result)
-	return &str, nil
+	var outFile = path.Join(outputPath, name+".p12")
+	err = ioutil.WriteFile(outFile, result, 0644)
+	if err != nil {
+		return errors.New("failed to save bundle to file")
+	}
+
+	return nil
 }

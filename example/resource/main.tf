@@ -23,13 +23,12 @@ resource "tls_self_signed_cert" "example_certificate" {
   ]
 }
 
+provider "keystore" {
+  path = "${path.module}/../out"
+}
+
 resource "keystore_pkcs12_bundle" "my-bundle" {
   name = "my-bundle-name"
   cert_pem = "${tls_self_signed_cert.example_certificate.cert_pem}"
   key_pem = "${tls_private_key.example.private_key_pem}"
-}
-
-resource "local_file" "my-bundle" {
-    content_base64 = "${keystore_pkcs12_bundle.my-bundle.bundle}"
-    filename       = "${path.module}/my-bundle.p12"
 }
