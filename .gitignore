@@ -309,7 +309,7 @@ modules.xml
 
 ### Terraform ###
 # Local .terraform directories
-example/resource/.terraform/*
+.terraform/
 
 # .tfstate files
 *.tfstate
