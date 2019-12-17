@@ -29,6 +29,12 @@ func pkcsBundle() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"ca_certs": &schema.Schema{
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Set:      schema.HashString,
+			},
 			"bundle": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
@@ -44,8 +50,9 @@ func pkcsBundleCreate(d *schema.ResourceData, m interface{}) error {
 
 	certPEM := d.Get("cert_pem").(string)
 	keyPEM := d.Get("key_pem").(string)
+	caCerts := d.Get("ca_certs").(*schema.Set).List()
 
-	err := impl.CreateBundle(certPEM, keyPEM, outputPath, name)
+	err := impl.CreateBundle(certPEM, keyPEM, impl.SliceOfString(caCerts), outputPath, name)
 	if err != nil {
 		return err
 	}

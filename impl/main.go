@@ -10,7 +10,7 @@ import (
 	"software.sslmate.com/src/go-pkcs12"
 )
 
-func CreateBundle(certPEM string, keyPEM string, outputPath string, name string) error {
+func CreateBundle(certPEM string, keyPEM string, caCertsPEM []string, outputPath string, name string) error {
 	block, _ := pem.Decode([]byte(certPEM))
 	if block == nil || block.Type != "CERTIFICATE" {
 		return errors.New("could not decode public certificate")
@@ -35,11 +35,26 @@ func CreateBundle(certPEM string, keyPEM string, outputPath string, name string)
 		return errors.New("could not parse private key")
 	}
 
+	caCerts := make([]*x509.Certificate, len(caCertsPEM))
+	for i, cert := range caCertsPEM {
+		block, _ := pem.Decode([]byte(cert))
+		if block == nil || block.Type != "CERTIFICATE" {
+			return errors.New("could not decode CA certificate")
+		}
+
+		caCert, err := x509.ParseCertificate(block.Bytes)
+		if err != nil {
+			return errors.New("could not parse CA certificate")
+		}
+
+		caCerts[i] = caCert
+	}
+
 	result, err := pkcs12.Encode(
 		rand.Reader,
 		privateKey,
 		publicKey,
-		[]*x509.Certificate{},
+		caCerts,
 		pkcs12.DefaultPassword,
 	)
 
@@ -54,4 +69,12 @@ func CreateBundle(certPEM string, keyPEM string, outputPath string, name string)
 	}
 
 	return nil
+}
+
+func SliceOfString(slice []interface{}) []string {
+	result := make([]string, len(slice), len(slice))
+	for i, s := range slice {
+		result[i] = s.(string)
+	}
+	return result
 }

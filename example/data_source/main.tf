@@ -1,4 +1,3 @@
-
 provider "keystore" {
   path = "${path.module}/../out"
 }
@@ -8,5 +7,5 @@ data "keystore_pkcs12_bundle" "my-bundle" {
 }
 
 output "my-bundle" {
-  value = "${data.keystore_pkcs12_bundle.my-bundle.bundle}"
+  value = data.keystore_pkcs12_bundle.my-bundle.bundle
 }
